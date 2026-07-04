@@ -1,3 +1,5 @@
+version: "3.8"
+
 networks:
   kinetic-network:
     driver: bridge
@@ -8,7 +10,7 @@ volumes:
 
 services:
   mongo-db:
-    image: mongo
+    image: mongo:latest
     container_name: kinetic-db
     restart: always
     ports:
@@ -17,6 +19,11 @@ services:
       - kinetic-db-data:/data/db
     networks:
       - kinetic-network
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   backend:
     build: ./backend
@@ -27,11 +34,13 @@ services:
     networks:
       - kinetic-network
     depends_on:
-      - mongo-db
+      mongo-db:
+        condition: service_healthy
     env_file:
       - ./backend/.env
     environment:
       - MONGO_URI=mongodb://mongo-db:27017/kinetic
+      - NODE_ENV=production
 
   frontend:
     build: ./frontend
@@ -41,5 +50,9 @@ services:
       - "5173:5173"
     networks:
       - kinetic-network
+    depends_on:
+      - backend
     env_file:
       - ./frontend/.env
+    environment:
+      - VITE_API_URL=http://backend:3000
