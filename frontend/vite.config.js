@@ -6,6 +6,17 @@ import babel from '@rolldown/plugin-babel'
 export default defineConfig({
   plugins: [
     react(),
-    babel({ presets: [reactCompilerPreset()] })
+    babel({
+      presets: [reactCompilerPreset()],
+    }),
   ],
+
+  server: {
+    host: "0.0.0.0", // Allows access from outside the container
+    port: 5173,
+
+    watch: {
+      usePolling: true,
+    },
+  },
 })

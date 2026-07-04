@@ -17,7 +17,6 @@ services:
       - kinetic-db-data:/data/db
     networks:
       - kinetic-network
-    
 
   backend:
     build: ./backend
@@ -31,6 +30,8 @@ services:
       - mongo-db
     env_file:
       - ./backend/.env
+    environment:
+      - MONGO_URI=mongodb://mongo-db:27017/kinetic
 
   frontend:
     build: ./frontend

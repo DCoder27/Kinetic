@@ -6,8 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon server.js",
-    "build":"rm rf dist && cp -R src dist",
-    "start":"node --watch server.js"
+    "build": "mkdir -p dist && cp -R src dist",
+    "start": "node server.js"
   },
   "keywords": [],
   "author": "",
