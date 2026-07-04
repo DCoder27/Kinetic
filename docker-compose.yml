@@ -1,0 +1,44 @@
+networks:
+  kinetic-network:
+    driver: bridge
+
+volumes:
+  kinetic-db-data:
+    driver: local
+
+services:
+  mongo-db:
+    image: mongo
+    container_name: kinetic-db
+    restart: always
+    ports:
+      - "27018:27017"
+    volumes:
+      - kinetic-db-data:/data/db
+    networks:
+      - kinetic-network
+    
+
+  backend:
+    build: ./backend
+    container_name: kinetic-backend
+    restart: always
+    ports:
+      - "3000:3000"
+    networks:
+      - kinetic-network
+    depends_on:
+      - mongo-db
+    env_file:
+      - ./backend/.env
+
+  frontend:
+    build: ./frontend
+    container_name: kinetic-frontend
+    restart: always
+    ports:
+      - "5173:5173"
+    networks:
+      - kinetic-network
+    env_file:
+      - ./frontend/.env
